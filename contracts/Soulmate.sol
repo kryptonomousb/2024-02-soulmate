@@ -29,7 +29,11 @@ contract Soulmate is ERC721 {
 
     mapping(uint256 id => string) public sharedSpace;
 
+    mapping(address owner => uint256 id) public sharedSpaceToId;
+    uint256 public sharedSpaceId;
+
     uint256 private nextID;
+    
 
     /*//////////////////////////////////////////////////////////////
                                  EVENTS
@@ -65,11 +69,15 @@ contract Soulmate is ERC721 {
         if (soulmate1 == address(0)) {
             idToOwners[nextID][0] = msg.sender;
             ownerToId[msg.sender] = nextID;
+            sharedSpaceToId[msg.sender] = sharedSpaceId;
+            sharedSpaceId++;
             emit SoulmateIsWaiting(msg.sender);
         } else if (soulmate2 == address(0)) {
             idToOwners[nextID][1] = msg.sender;
             // Once 2 soulmates are reunited, the token is minted
-            ownerToId[msg.sender] = nextID;
+            ownerToId[msg.sender] =nextID;
+            sharedSpaceToId[msg.sender] = sharedSpaceId;
+            sharedSpaceId++;
             soulmateOf[msg.sender] = soulmate1;
             soulmateOf[soulmate1] = msg.sender;
             idToCreationTimestamp[nextID] = block.timestamp;
@@ -95,21 +103,27 @@ contract Soulmate is ERC721 {
         // Having a soulmate is for life !
         revert Soulmate__SoulboundTokenCannotBeTransfered();
     }
-    //@audit-issue overwrites old message  keep track of messages with id.
+    //@audit-issue overwrites old message keep track of messages with id.
     /// @notice Allows any soulmates with the same NFT ID to write in a shared space on blockchain.
     /// @param message The message to write in the shared space.
     function writeMessageInSharedSpace(string calldata message) external {
         uint256 id = ownerToId[msg.sender];
-        sharedSpace[id] = message;
+        address soulmate = soulmateOf[msg.sender];
+        uint256 _sharedSpaceId = sharedSpaceToId[soulmate];
+        sharedSpace[_sharedSpaceId] = message;
         emit MessageWrittenInSharedSpace(id, message);
     }
+
+
     //@audit-issue overwrites old message keep track if read previous
     //@audit-issue message empty with , mydear   @randomizes each time
      /// @notice Allows any soulmates with the same NFT ID to read in a shared space on blockchain.
     
     function readMessageInSharedSpace() external view returns (string memory) {
         // Add a little touch of romantism
-        return string.concat(sharedSpace[ownerToId[msg.sender]], ", ", niceWords[block.timestamp % niceWords.length]);
+       // return string.concat(sharedSpace[ownerToId[msg.sender]], ", ", niceWords[block.timestamp % niceWords.length]);
+       return string.concat(sharedSpace[sharedSpaceToId[msg.sender]], ", ", niceWords[block.timestamp % niceWords.length]);
+
     }
     //@audit-issue  once devorced, can not get another soulmate.
     /// @notice Cancel possibily for 2 lovers to collect LoveToken from the airdrop.

@@ -24,6 +24,7 @@ contract Vault {
     /// @notice Init vault with the loveToken.
     /// @notice Vault will approve its corresponding management contract to handle tokens.
     /// @notice vaultInitialize protect against multiple initialization.
+    //@audit-issue initvault public
     function initVault(ILoveToken loveToken, address managerContract) public {
         if (vaultInitialize) revert Vault__AlreadyInitialized();
         loveToken.initVault(managerContract);

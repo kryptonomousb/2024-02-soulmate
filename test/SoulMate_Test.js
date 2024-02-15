@@ -56,12 +56,12 @@ it("Test Messages", async function(){
     await soulmateContract.connect(soulmate2).mintSoulmateToken();
     console.log("====================================");
     console.log("DEFAULT MESSAGE: ", await soulmateContract.connect(soulmate1).readMessageInSharedSpace())
-    await soulmateContract.connect(soulmate1).writeMessageInSharedSpace("Soulmate #1 sent - Message 1a");
+    await soulmateContract.connect(soulmate1).writeMessageInSharedSpace("seeing Soulmate #1 meant for Soulmate 2 - Message 1a");
     console.log("soulmate1 sets message");
     console.log("soulmate1 views MSG: ", await soulmateContract.connect(soulmate1).readMessageInSharedSpace());
     console.log("soulmate2 does not check message");
     console.log("soulmate2 sets a message without checking");
-    await soulmateContract.connect(soulmate2).writeMessageInSharedSpace("Soulmate #2 sent- Message 1b");
+    await soulmateContract.connect(soulmate2).writeMessageInSharedSpace("seeing Soulmate #2 meant for Soulmate 1- Message 1b");
     console.log("soulmate1 Checks MSG: ",await soulmateContract.connect(soulmate1).readMessageInSharedSpace());
     console.log("soulmate2 Checks MSG: ",await soulmateContract.connect(soulmate2).readMessageInSharedSpace());
     console.log("====================================");
