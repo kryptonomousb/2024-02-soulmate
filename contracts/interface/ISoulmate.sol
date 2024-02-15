@@ -20,8 +20,8 @@ interface ISoulmate {
 
     function readMessageInSharedSpace() external view returns (string memory message);
 
-    function getDivorced() external;
-
+    function getDivorced() external ;
+//@audit-issue add address to isDivorced
     function isDivorced() external view returns (bool);
 
     function totalSupply() external view returns (uint256);

@@ -47,14 +47,8 @@ contract BaseTest is Test {
             ISoulmate(address(soulmateContract)),
             IVault(address(airdropVault))
         );
-        airdropVault.initVault(
-            ILoveToken(address(loveToken)),
-            address(airdropContract)
-        );
-        stakingVault.initVault(
-            ILoveToken(address(loveToken)),
-            address(stakingContract)
-        );
+        airdropVault.initVault(ILoveToken(address(loveToken)), address(airdropContract));
+        stakingVault.initVault(ILoveToken(address(loveToken)), address(stakingContract));
 
         // init
         vm.stopPrank();
@@ -68,9 +62,9 @@ contract BaseTest is Test {
         soulmateContract.mintSoulmateToken();
     }
 
-    function _giveLoveTokenToSoulmates(uint amount) internal {
+    function _giveLoveTokenToSoulmates(uint256 amount) internal {
         _mintOneTokenForBothSoulmates();
-        uint numberDays = amount / 1e18;
+        uint256 numberDays = amount / 1e18;
         vm.warp(block.timestamp + (numberDays * 1 days));
 
         vm.prank(soulmate1);
@@ -80,7 +74,7 @@ contract BaseTest is Test {
         airdropContract.claim();
     }
 
-    function _depositTokenToStake(uint amount) internal {
+    function _depositTokenToStake(uint256 amount) internal {
         _giveLoveTokenToSoulmates(amount);
         vm.startPrank(soulmate1);
         loveToken.approve(address(stakingContract), amount);

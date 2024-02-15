@@ -78,7 +78,6 @@ contract Staking {
         if (timeInWeeksSinceLastClaim < 1) {
             revert Staking__StakingPeriodTooShort();
         }
-        
 
         lastClaim[msg.sender] = block.timestamp;
 

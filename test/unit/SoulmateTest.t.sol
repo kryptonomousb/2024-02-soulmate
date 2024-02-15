@@ -8,7 +8,7 @@ import {Soulmate} from "../../src/Soulmate.sol";
 
 contract SoulmateTest is BaseTest {
     function test_MintNewToken() public {
-        uint tokenIdMinted = 0;
+        uint256 tokenIdMinted = 0;
 
         vm.prank(soulmate1);
         soulmateContract.mintSoulmateToken();
@@ -33,13 +33,8 @@ contract SoulmateTest is BaseTest {
         soulmateContract.transferFrom(soulmate1, soulmate2, 0);
     }
 
-    function compare(
-        string memory str1,
-        string memory str2
-    ) public pure returns (bool) {
-        return
-            keccak256(abi.encodePacked(str1)) ==
-            keccak256(abi.encodePacked(str2));
+    function compare(string memory str1, string memory str2) public pure returns (bool) {
+        return keccak256(abi.encodePacked(str1)) == keccak256(abi.encodePacked(str2));
     }
 
     function test_WriteAndReadSharedSpace() public {
@@ -49,14 +44,10 @@ contract SoulmateTest is BaseTest {
         vm.prank(soulmate2);
         string memory message = soulmateContract.readMessageInSharedSpace();
 
-        string[4] memory possibleText = [
-            "Buy some eggs, sweetheart",
-            "Buy some eggs, darling",
-            "Buy some eggs, my dear",
-            "Buy some eggs, honey"
-        ];
+        string[4] memory possibleText =
+            ["Buy some eggs, sweetheart", "Buy some eggs, darling", "Buy some eggs, my dear", "Buy some eggs, honey"];
         bool found;
-        for (uint i; i < possibleText.length; i++) {
+        for (uint256 i; i < possibleText.length; i++) {
             if (compare(possibleText[i], message)) {
                 found = true;
                 break;

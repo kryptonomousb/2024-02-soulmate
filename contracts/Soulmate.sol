@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.23;
 
-import {ERC721} from "@solmate/tokens/ERC721.sol";
+import {ERC721} from "solmate/src/tokens/ERC721.sol";
 
 /// @title Soulmate Soulbound NFT.
 /// @author n0kto
@@ -52,6 +52,7 @@ contract Soulmate is ERC721 {
     /// @notice Used to mint a token when soulmates are reunited.
     /// @notice Soulmates are reunited every time a second people try to mint the same ID.
     /// @return ID of the minted NFT.
+    //@audit-issue - once divorced, can not get another soulmate
     function mintSoulmateToken() public returns (uint256) {
         // Check if people already have a soulmate, which means already have a token
         address soulmate = soulmateOf[msg.sender];
@@ -94,7 +95,7 @@ contract Soulmate is ERC721 {
         // Having a soulmate is for life !
         revert Soulmate__SoulboundTokenCannotBeTransfered();
     }
-
+    //@audit-issue overwrites old message  keep track of messages with id.
     /// @notice Allows any soulmates with the same NFT ID to write in a shared space on blockchain.
     /// @param message The message to write in the shared space.
     function writeMessageInSharedSpace(string calldata message) external {
@@ -102,21 +103,24 @@ contract Soulmate is ERC721 {
         sharedSpace[id] = message;
         emit MessageWrittenInSharedSpace(id, message);
     }
-
-    /// @notice Allows any soulmates with the same NFT ID to read in a shared space on blockchain.
+    //@audit-issue overwrites old message keep track if read previous
+    //@audit-issue message empty with , mydear   @randomizes each time
+     /// @notice Allows any soulmates with the same NFT ID to read in a shared space on blockchain.
+    
     function readMessageInSharedSpace() external view returns (string memory) {
         // Add a little touch of romantism
         return string.concat(sharedSpace[ownerToId[msg.sender]], ", ", niceWords[block.timestamp % niceWords.length]);
     }
-
+    //@audit-issue  once devorced, can not get another soulmate.
     /// @notice Cancel possibily for 2 lovers to collect LoveToken from the airdrop.
     function getDivorced() public {
         address soulmate2 = soulmateOf[msg.sender];
         divorced[msg.sender] = true;
         divorced[soulmateOf[msg.sender]] = true;
+        
         emit CoupleHasDivorced(msg.sender, soulmate2);
     }
-
+    //@audit-issue change to add address - returning contract address
     function isDivorced() public view returns (bool) {
         return divorced[msg.sender];
     }
